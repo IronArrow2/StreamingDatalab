@@ -97,6 +97,8 @@ static public class AssignmentPart1
                     equipment += item;
                     equipment += ",";
                 }
+                //above loop causes problems with load function. Adding a comma after every entry makes it add an additional comma after the last entry, which causes a blank string to be loaded at the end of the equipment string, which breaks the load function when it tries to load that entry.
+                //problem is avoided by using TryParse instead of Parse, making the load function ignore bad parses, but there has to be a better way to do this
 
                 character += equipment;
 
@@ -109,19 +111,66 @@ static public class AssignmentPart1
     static public void LoadPartyButtonPressed()
     {
         string line = "";
+        string[] splitLine;
+        string[] charStats;
+        string[] charEquipment;
+
+        GameContent.partyCharacters.Clear();
+
         using(StreamReader sr = new StreamReader("savedata.txt"))
         {
             while ((line = sr.ReadLine()) != null)
             {
                 Debug.Log(line);
+
+                splitLine = line.Split('^');
+
+                foreach(string s in splitLine)
+                {
+                    Debug.Log(s);
+                }
+
+                charStats = splitLine[0].Split(',');
+
+                foreach (string s in charStats)
+                {
+                    Debug.Log(s);
+                }
+
+                charEquipment = splitLine[1].Split(',');
+
+                foreach (string s in charEquipment)
+                {
+                    Debug.Log(s);
+                }
+
+                PartyCharacter pc = new PartyCharacter();
+
+                pc.classID = int.Parse(charStats[0]);
+                pc.health = int.Parse(charStats[1]);
+                pc.mana = int.Parse(charStats[2]);
+                pc.strength = int.Parse(charStats[3]);
+                pc.agility = int.Parse(charStats[4]);
+                pc.wisdom = int.Parse(charStats[5]);
+
+                foreach(string s in charEquipment)
+                {
+                    int temp; 
+
+                    bool stringParsed = int.TryParse(s, out temp);
+
+                    if(stringParsed)
+                    {
+                        pc.equipment.AddLast(temp);
+                    }
+                }
+
+                GameContent.partyCharacters.AddLast(pc);
             }
         }
-        //GameContent.partyCharacters.Clear();
 
         GameContent.RefreshUI();
-
     }
-
 }
 
 
