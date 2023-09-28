@@ -54,6 +54,10 @@ public partial class PartyCharacter
 
 }
 
+struct Constants
+{
+    public const char itemSeperator = ',', fieldSeperator = '^';
+}
 
 /*
     Access to the on screen party data can be achieved via …..
@@ -84,18 +88,16 @@ static public class AssignmentPart1
             {
                 Debug.Log("PC class id == " + pc.classID);
 
-                string character = "";
-
                 //start saving general stats
-                string stats = pc.classID + "," + pc.health + "," + pc.mana + "," + pc.strength + "," + pc.agility + "," + pc.wisdom;
-                character += stats + "^";
+                string character = "" + pc.classID + Constants.itemSeperator + pc.health + Constants.itemSeperator + pc.mana + Constants.itemSeperator + pc.strength + Constants.itemSeperator + pc.agility + Constants.itemSeperator + pc.wisdom;
+                character += Constants.fieldSeperator;
 
                 //start saving equipment
                 string equipment = "";
                 foreach(int item in pc.equipment)
                 {
                     equipment += item;
-                    equipment += ",";
+                    equipment += Constants.itemSeperator;
                 }
                 //above loop causes problems with load function. Adding a comma after every entry makes it add an additional comma after the last entry, which causes a blank string to be loaded at the end of the equipment string, which breaks the load function when it tries to load that entry.
                 //problem is avoided by using TryParse instead of Parse, making the load function ignore bad parses, but there has to be a better way to do this
